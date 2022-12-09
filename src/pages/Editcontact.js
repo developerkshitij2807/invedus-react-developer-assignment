@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Editcontact = () => {
   const [contact, setContact] = useState({
@@ -9,14 +10,27 @@ const Editcontact = () => {
     profilePicture: "",
   });
 
+  const navigate = useNavigate();
+
+  const handleSaveClick = (e) => {
+    e.preventDefault();
+    const contacts = JSON.parse(localStorage.getItem("savedContacts"));
+    const contactIndex = JSON.parse(localStorage.getItem("editContactIndex"));
+    contacts[contactIndex] = contact;
+    localStorage.setItem("savedContacts", JSON.stringify(contacts));
+    navigate("/");
+  };
+
   useEffect(() => {
     const contacts = JSON.parse(localStorage.getItem("savedContacts"));
     const contactIndex = JSON.parse(localStorage.getItem("editContactIndex"));
     setContact(contacts[contactIndex]);
-    console.log(contact);
   }, []);
   return (
-    <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/2 mx-auto my-10">
+    <form
+      className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/2 mx-auto my-10"
+      onSubmit={handleSaveClick}
+    >
       <div className="mb-4">
         <label
           className="block text-gray-700 text-sm font-bold mb-2"
@@ -76,7 +90,7 @@ const Editcontact = () => {
           <input
             className="mr-2 leading-tight"
             type="checkbox"
-            value={contact.isWhatsapp}
+            checked={contact.isWhatsapp}
             onChange={(e) =>
               setContact({ ...contact, isWhatsapp: e.target.checked })
             }
@@ -101,6 +115,14 @@ const Editcontact = () => {
             };
           }}
         />
+      </div>
+      <div className="mb-4 text-right">
+        <button
+          type="submit"
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+        >
+          Save
+        </button>
       </div>
     </form>
   );
